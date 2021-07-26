@@ -1,0 +1,217 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+header {
+  background-color: #efefef;
+  color: black;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1 {
+  font-size: 36px;
+}
+
+h2 {
+  font-size: 29px;
+}
+
+h3 {
+  font-size: 27px;
+}
+
+h4 {
+  font-size: 25px;
+}
+
+h5 {
+  font-size: 22px;
+}
+
+h6 {
+  font-size: 20px;
+}
+
+p,
+a,
+span {
+  font-size: 18px;
+}
+
+button {
+  background-color: transparent;
+  padding: 1rem 2rem;
+  outline: none;
+  border: none;
+  border-radius: 15px;
+
+  &:hover{
+    cursor: pointer;
+  }
+  &[disabled]{
+    background-color: grey;
+    cursor: not-allowed;
+  }
+}
+
+input, select{
+  height: 40px;
+  width: 90%;
+  padding: 5px 10px;
+  &:focus{
+    outline: none;
+  }
+}
+.btn-default {
+  border: 1px solid #eee;
+  color: #000;
+}
+.btn-danger {
+  background-color: rgb(175, 18, 50);
+}
+.btn-success {
+  background-color: green;
+}
+.btn-warning {
+  background-color: rgb(184, 184, 11);
+}
+.text-white {
+  color: #fff;
+}
+table {
+  background-color: #efefef;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-content-end {
+  justify-content: end;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.list-style-none {
+  list-style: none;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.container {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.py-0 {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+// Header
+header {
+  padding: 1rem;
+
+  ul li {
+    margin-left: 0.5em;
+  }
+
+  a.active {
+    color: green;
+    font-weight: 500;
+  }
+}
+
+// Employees page
+.employees {
+  padding-top: 2rem;
+
+  table {
+    table-layout: fixed;
+    tr {
+
+      th,
+      td {
+        padding: 1rem 0;
+        width: 25%;
+      }
+
+      th {
+        background-color: green;
+        color: white;
+        border: none;
+      }
+    }
+    tbody {
+      tr:nth-child(odd){
+        background-color: rgba($color: #4ea109, $alpha: 0.5);
+      }
+      tr.row-input, tr.action {
+        background-color: #e3e3e3;
+      }
+      tr.action {
+        padding-right: 2rem;
+      }
+      tr.row-input.error td {
+        padding-bottom: 0;
+      }
+    }
+    button {
+      color: white;
+    }
+  }
+}
+
+.pagination {
+  max-width: 70%;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+  margin-top: 20px;
+
+  li {
+    list-style: none;
+    padding: 0.5rem 1rem;
+    &:hover{
+      cursor: pointer;
+    }
+    &.active {
+      background-color: green;
+      color: white;
+    }
+  }
+}
+
+.error-msg {
+  color:rgb(175, 18, 50);
+  text-align: left;
+  width: 90%;
+  margin-left: auto;
+}
+
+// Counter
+.counter {
+  padding: 30px;
+  button {
+    margin-left: 20px;
+    margin-top: 20px;
+  }
+}
+
+.text-right {
+  text-align: right;
+}
