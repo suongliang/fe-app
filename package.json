@@ -24,7 +24,10 @@
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
-    "eslint-plugin-react": "^7.24.0"
+    "eslint-plugin-react": "^7.24.0",
+    "@types/react-paginate": "^7.1.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.3",
+    "@typescript-eslint/parser": "^4.28.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -53,8 +56,5 @@
     ]
   },
   "devDependencies": {
-    "@types/react-paginate": "^7.1.1",
-    "@typescript-eslint/eslint-plugin": "^4.28.3",
-    "@typescript-eslint/parser": "^4.28.3"
   }
 }
