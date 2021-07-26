@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import ReactPaginate from 'react-paginate'
 import ListOfEmployees from '../components/employees/ListOfEmployees'
 import { Models } from '../models/employee.model'
@@ -41,12 +41,12 @@ export default function Employees() {
       const data = await Promise.all([UserService.getEmployees(), UserService.getPositions()])
       const getEmployeesTempData = localStorage.getItem('newEmployees')
       if (data) {
-        const chunkEmployees = _chunkingEmployees(data[0])
         if (getEmployeesTempData) {
-          chunkEmployees[chunkEmployees.length - 1] = chunkEmployees[chunkEmployees.length - 1].concat(JSON.parse(getEmployeesTempData))
+          data[0] = data[0].concat(JSON.parse(getEmployeesTempData))
         }
+        const chunkEmployees = _chunkingEmployees(data[0])
         setState({
-          ...state, employees: data, chunkEmployees, positions: data[1], pageCount: Math.ceil(data[0].length / 5), isLoadingData: false
+          ...state, employees: data[0], chunkEmployees, positions: data[1], pageCount: Math.ceil(data[0].length / 5), isLoadingData: false
         })
       }
     }
@@ -62,15 +62,34 @@ export default function Employees() {
     }
     array.push(employee)
     localStorage.setItem('newEmployees', JSON.stringify(array))
+    const newData = [...state.employees]
+    newData.push(employee)
+    const newChunks = _chunkingEmployees(newData)
+    setState({ ...state, chunkEmployees: newChunks, employees: newData, pageCount: Math.ceil(newData.length / 5) })
   }
 
-  const refetchEmployeesList = useCallback(async () => {
+  const _setChunkingList = (totalEmployees: Array<Models.Employee>, isDeleteOperation?: boolean) => {
+    setState({ ...state, isLoadingData: true })
+    let newData = [...totalEmployees]
+    if (!isDeleteOperation) {
+      const getEmployeesTempData = localStorage.getItem('newEmployees')
+      let array = []
+      if (getEmployeesTempData) {
+        array = JSON.parse(getEmployeesTempData)
+      }
+      newData = newData.concat(array)
+    }
+    const newChunks = _chunkingEmployees(newData)
+    setState({ ...state, chunkEmployees: newChunks, isLoadingData: false, employees: newData, pageCount: Math.ceil(newData.length / 5) })
+  }
+
+  const refetchEmployeesList = async () => {
+    setState({ ...state, isLoadingData: true })
     const employees = await UserService.getEmployees()
     if (employees) {
-      const chunkEmployees = _chunkingEmployees(employees)
-      setState({ ...state, chunkEmployees })
+      _setChunkingList(employees)
     }
-  }, [])
+  }
 
   const _getLocalStorageData = (): Array<Models.Employee> | [] => {
     const getEmployeesTempData = localStorage.getItem('newEmployees')
@@ -81,24 +100,23 @@ export default function Employees() {
   }
 
   const _setLocalStorageData = (array: Array<Models.Employee>) => {
-    const getEmployeesTempData = localStorage.getItem('newEmployees')
-    if (getEmployeesTempData) {
-      localStorage.setItem('newEmployees', JSON.stringify(array))
-    }
+    localStorage.setItem('newEmployees', JSON.stringify(array))
   }
 
   const _deleteEmployee = (employeeId: number) => {
     if (employeeId) {
-      const isEmployeeExisted = state.employees.findIndex(employee => employee.id === employeeId) > -1
-      if (isEmployeeExisted) {
-        return UserService.deleteEmployee(employeeId).then(() => refetchEmployeesList())
+      const isEmployeeExisted = state.employees.findIndex(employee => employee.id === employeeId)
+      const localStorageData = _getLocalStorageData()
+      const localDataIndex = localStorageData.length > 0 ? localStorageData.findIndex(employee => employee.id === employeeId) : -1
+      if (localDataIndex <= -1) {
+        if (isEmployeeExisted) UserService.deleteEmployee(employeeId).then(() => refetchEmployeesList())
       } else {
-        const localStorageData = _getLocalStorageData()
-        const employeeIndex = localStorageData.length > 0 ? localStorageData.findIndex(employee => employee.id === employeeId) : -1
-        if (employeeIndex > -1) {
-          const modifiedData = localStorageData.splice(employeeIndex, 1)
-          _setLocalStorageData(modifiedData)
-        }
+        localStorageData.splice(localDataIndex, 1)
+        _setLocalStorageData(localStorageData)
+        const newData = [...state.employees]
+        const recordIndex = newData.findIndex(x => x.id === employeeId)
+        newData.splice(recordIndex, 1)
+        _setChunkingList(newData, true)
       }
     }
   }
@@ -109,6 +127,8 @@ export default function Employees() {
       pageIndex: selected
     })
   }
+
+  const activePageIndex = useMemo(() => state.pageIndex, [state.employees])
 
   return (
     <section className="employees container">
@@ -129,6 +149,7 @@ export default function Employees() {
           pageCount={state.pageCount}
           marginPagesDisplayed={2}
           pageRangeDisplayed={5}
+          initialPage={activePageIndex}
           onPageChange={_handlePageClick}
           containerClassName={'pagination'}
           activeClassName={'active'}

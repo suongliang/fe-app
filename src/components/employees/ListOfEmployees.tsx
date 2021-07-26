@@ -84,12 +84,19 @@ export default function ListOfEmployees({ employees, isLoadingData, pageIndex, p
 
   useEffect(() => {
     if (state.name) {
-      console.log(state.name, _checkNameValid(state.name))
       if (!_checkNameValid(state.name)) {
         _setValidationMessage("nameValidationErrorMsg", "Name is not valid")
       }
     }
   }, [state.name])
+
+  useEffect(() => {
+    if (!state.position) {
+      _setValidationMessage("positionErrorMsg", "Please select at least one position")
+    } else {
+      _setValidationMessage("positionErrorMsg", "")
+    }
+  }, [state.position])
 
   const _addNewEmployee = () => {
     if (!state.error && (state.name && state.email && state.position)) {
@@ -97,13 +104,14 @@ export default function ListOfEmployees({ employees, isLoadingData, pageIndex, p
       const newId = IdGenerator.generateNextId(+lastChunkArray[lastChunkArray.length - 1].id) || Math.random()
       const newEmployee: Models.Employee = new Models.Employee(newId, state.name, state.email, new Date(), state.position)
       addNewEmployee(newEmployee)
+      setState({ ...state, isAddNew: false })
     }
   }
 
   const _renderTableData = () => {
     const rowErrorCssClass = state.error ? 'error' : ''
     if (employees.length > 0) {
-      return <table cellSpacing={0} cellPadding={0} >
+      return <table cellSpacing={0} cellPadding={0}>
         <thead>
           <tr>
             <th>Employee name</th>
@@ -113,17 +121,18 @@ export default function ListOfEmployees({ employees, isLoadingData, pageIndex, p
           </tr>
         </thead>
         <tbody>
-          {employees[pageIndex].map((employee, index) => {
+          {employees[pageIndex] && employees[pageIndex].map((employee, index) => {
             return (
               <tr key={index}>
                 <td>{employee.name}</td>
                 <td>{employee.email}</td>
                 <td>{employee.position}</td>
                 <td>
-                  <button className="btn-danger" onClick={() => deleteEmployee(employee.id)}>Remove</button></td>
+                  <button className="btn-danger" onClick={(e) => deleteEmployee(+employee.id)}>Remove</button></td>
               </tr>
             )
-          })}
+          })
+          }
           <tr className={`row-input ${rowErrorCssClass}`} style={{ display: state.isAddNew ? "table-row" : "none" }}>
             <td>
               <input type="text" onChange={_setData} placeholder="Name" name="name" id="name" />
@@ -133,6 +142,7 @@ export default function ListOfEmployees({ employees, isLoadingData, pageIndex, p
             </td>
             <td>
               <select name="position" id="position" onChange={_setData}>
+                <option defaultChecked>Please select</option>
                 {positions.length > 0 && positions.map((position) => (<option key={position.id} value={position.name}>{position.name}</option>))}
               </select>
             </td>

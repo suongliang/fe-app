@@ -88,6 +88,7 @@ table {
   background-color: #efefef;
   margin-left: auto;
   margin-right: auto;
+  overflow-x: auto;
 }
 
 .d-flex {
@@ -156,7 +157,7 @@ header {
     }
     tbody {
       tr:nth-child(odd){
-        background-color: rgba($color: #4ea109, $alpha: 0.5);
+        background-color: rgb(204, 228, 204)
       }
       tr.row-input, tr.action {
         background-color: #e3e3e3;
@@ -185,7 +186,10 @@ header {
 
   li {
     list-style: none;
-    padding: 0.5rem 1rem;
+    a {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+    }
     &:hover{
       cursor: pointer;
     }
@@ -214,4 +218,9 @@ header {
 
 .text-right {
   text-align: right;
+}
+
+// Landing Page
+.landing-page {
+  margin-top: 10%;
 }
